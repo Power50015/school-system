@@ -1,13 +1,15 @@
 <template>
-  <Navbar />
-  <main class="container my-2">
+  <Loading v-if="!auth.load" />
+  <div v-if="auth.load">
+    <Navbar />
     <RouterView />
-  </main>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { RouterView } from "vue-router";
 import Navbar from "./components/Navbar.vue";
+import Loading from "./components/loading.vue";
 import { useAuthStore } from "@/stores/auth";
 
 const auth = useAuthStore();
@@ -15,9 +17,4 @@ const auth = useAuthStore();
 
 <style>
 @import "@/assets/base.css";
-main {
-  background-color: #565656c4;
-  min-height: 88vh;
-  border-radius: 50px;
-}
 </style>

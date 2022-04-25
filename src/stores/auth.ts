@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import app from "../firebase";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore,serverTimestamp } from "firebase/firestore";
+
 import {
   doc,
   updateDoc,
@@ -12,14 +13,6 @@ import {
   where,
 } from "firebase/firestore";
 import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  uploadString,
-  getDownloadURL,
-  uploadBytes,
-} from "firebase/storage";
-import {
   getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -27,7 +20,6 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 const auth = getAuth();
-const storage = getStorage();
 const db = getFirestore();
 
 // wait until auth is ready
@@ -35,72 +27,80 @@ const unsub = await onAuthStateChanged(auth, async (user) => {
   const auth = useAuthStore();
   if (user) {
     const q = query(
-      collection(db, "studentAffair"),
+      collection(db, "doctors"),
       where("email", "==", user.email)
     );
-
     const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
+      const q = query(
+        collection(db, "studentAffair"),
+        where("email", "==", user.email)
+      );
+      const querySnapshot = await getDocs(q);
+      if (querySnapshot.empty) {
+        const q = query(
+          collection(db, "students"),
+          where("email", "==", user.email)
+        );
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          auth.isLogin = true;
+          auth.name = doc.data().name;
+          auth.email = doc.data().email;
+          auth.photo = doc.data().photo;
 
-    await querySnapshot.forEach((doc) => {
-      auth.isLogin = true;
-      auth.name = doc.data().name;
-      auth.email = doc.data().email;
-      auth.img = doc.data().img;
-      auth.isloaded = true;
-    });
-  } else {
-    auth.isloaded = true;
+          auth.type = "students";
+        });
+      } else {
+        querySnapshot.forEach((doc) => {
+          auth.isLogin = true;
+          auth.name = doc.data().name;
+          auth.email = doc.data().email;
+          auth.photo = doc.data().photo;
+          auth.password = doc.data().password;
+          auth.type = "studentAffair";
+        });
+      }
+    } else {
+      querySnapshot.forEach((doc) => {
+        auth.isLogin = true;
+        auth.name = doc.data().name;
+        auth.email = doc.data().email;
+        auth.photo = doc.data().photo;
+        auth.type = "doctors";
+      });
+    }
   }
-
+  auth.load = true;
   unsub();
 });
 
 export const useAuthStore = defineStore({
   id: "auth",
   state: () => ({
-    isloaded: false,
     isLogin: false,
     name: "",
     email: "",
-    img: "",
-    fileUpload: 0,
+    photo: "",
+    type: "",
+    password: "",
+    load: false,
   }),
   actions: {
-    addUser(
-      name: string,
-      email: string,
-      password: string,
-      des: string,
-      area: string,
-      adrres: string,
-      phone: string,
-      img: string
-    ): any {
-      this.isloaded = false;
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          // Add a new document in collection "hospitals"
-          addDoc(collection(db, "restaurants"), {
-            name: name,
-            email: email,
-            adrres: adrres,
-            area: area,
-            des: des,
-            img: img,
-            phone: phone,
-          }).then((user) => {
-            this.restaurantId = user.id;
+    doctorLogin(email: string, password: string) {
+      signInWithEmailAndPassword(auth, email, password)
+        .then(async () => {
+          const q = query(
+            collection(db, "doctors"),
+            where("email", "==", email)
+          );
+          const querySnapshot = await getDocs(q);
+          querySnapshot.forEach((doc) => {
             this.isLogin = true;
-            this.restaurantName = name;
-            this.restaurantEmail = email;
-            this.restaurantAdrres = adrres;
-            this.restaurantArea = area;
-            this.restaurantDes = des;
-            this.restaurantImg = img;
-            this.restaurantPhone = phone;
-            this.isloaded = true;
+            this.name = doc.data().name;
+            this.email = doc.data().email;
+            this.photo = doc.data().photo;
+            this.type = "doctors";
           });
         })
         .catch((error) => {
@@ -108,27 +108,25 @@ export const useAuthStore = defineStore({
           const errorMessage = error.message;
           console.log(errorCode);
           console.log(errorMessage);
-          this.isloaded = true;
         });
-      return this.isLogin;
     },
     studentAffairLogin(email: string, password: string) {
-      this.isloaded = false;
+      this.load = false;
       signInWithEmailAndPassword(auth, email, password)
         .then(async () => {
           const q = query(
             collection(db, "studentAffair"),
             where("email", "==", email)
           );
-
           const querySnapshot = await getDocs(q);
           querySnapshot.forEach((doc) => {
-            const auth = useAuthStore();
-            auth.isLogin = true;
-            auth.name = doc.data().name;
-            auth.email = doc.data().email;
-            auth.img = doc.data().adrres;
-            auth.isloaded = true;
+            this.isLogin = true;
+            this.name = doc.data().name;
+            this.email = doc.data().email;
+            this.photo = doc.data().photo;
+            this.password = doc.data().password;
+            this.type = "studentAffair";
+            this.load = true;
           });
         })
         .catch((error) => {
@@ -136,88 +134,7 @@ export const useAuthStore = defineStore({
           const errorMessage = error.message;
           console.log(errorCode);
           console.log(errorMessage);
-          this.isloaded = true;
-        });
-    },
-    studentLogin(email: string, password: string) {
-      this.isloaded = false;
-      signInWithEmailAndPassword(auth, email, password)
-        .then(async () => {
-          const q = query(
-            collection(db, "student"),
-            where("email", "==", email)
-          );
-
-          const querySnapshot = await getDocs(q);
-          querySnapshot.forEach((doc) => {
-            const auth = useAuthStore();
-            auth.isLogin = true;
-            auth.name = doc.data().name;
-            auth.email = doc.data().email;
-            auth.img = doc.data().adrres;
-            auth.isloaded = true;
-          });
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode);
-          console.log(errorMessage);
-          this.isloaded = true;
-        });
-    },
-    teacherLogin(email: string, password: string) {
-      this.isloaded = false;
-      signInWithEmailAndPassword(auth, email, password)
-        .then(async () => {
-          const q = query(
-            collection(db, "teacher"),
-            where("email", "==", email)
-          );
-
-          const querySnapshot = await getDocs(q);
-          querySnapshot.forEach((doc) => {
-            const auth = useAuthStore();
-            auth.isLogin = true;
-            auth.name = doc.data().name;
-            auth.email = doc.data().email;
-            auth.img = doc.data().adrres;
-            auth.isloaded = true;
-          });
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode);
-          console.log(errorMessage);
-          this.isloaded = true;
-        });
-    },
-    accounterLogin(email: string, password: string) {
-      this.isloaded = false;
-      signInWithEmailAndPassword(auth, email, password)
-        .then(async () => {
-          const q = query(
-            collection(db, "accounter"),
-            where("email", "==", email)
-          );
-
-          const querySnapshot = await getDocs(q);
-          querySnapshot.forEach((doc) => {
-            const auth = useAuthStore();
-            auth.isLogin = true;
-            auth.name = doc.data().name;
-            auth.email = doc.data().email;
-            auth.img = doc.data().adrres;
-            auth.isloaded = true;
-          });
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode);
-          console.log(errorMessage);
-          this.isloaded = true;
+          this.load = true;
         });
     },
     logout() {
@@ -225,8 +142,53 @@ export const useAuthStore = defineStore({
         this.isLogin = false;
         this.name = "";
         this.email = "";
-        this.img = "";
+        this.photo = "";
+        this.type = "";
       });
+    },
+    addUser(
+      name: string,
+      email: string,
+      photo: string,
+      password: string,
+      type: string
+    ) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          // Add a new document in collection "doctors"
+          if (type == "teachers") {
+            addDoc(collection(db, type), {
+              name: name,
+              email: email,
+              photo: photo,
+            });
+          } else if (type == "students") {
+            addDoc(collection(db, type), {
+              name: name,
+              email: email,
+              photo: photo,
+            });
+          } else {
+            addDoc(collection(db, type), {
+              name: name,
+              email: email,
+              photo: photo,
+              password:password
+            });
+          }
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode);
+          console.log(errorMessage);
+        });
+      setTimeout(() => {
+        signOut(auth).then(() => {
+          signInWithEmailAndPassword(auth, this.email, this.password);
+        });
+      }, 1500);
     },
   },
 });

@@ -1,55 +1,145 @@
 <template>
-  <div class="row">
-    <h1 class="text-white text-center py-5">تسجيل الدخول للطالب</h1>
-    <form @submit.prevent="studentLogin()">
-      <div class="mb-3">
-        <label for="exampleInputEmail1" class="form-label">البريد الإلكترونى</label>
-        <input
-          type="email"
-          class="form-control"
-          id="exampleInputEmail1"
-          aria-describedby="emailHelp"
-          v-model="userEmail"
-        />
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 col-md-8 login-box">
+        <div class="col-lg-12 login-title">Student Login</div>
+
+        <div class="col-lg-12 login-form">
+          <div class="col-lg-12 login-form">
+            <form>
+              <div class="form-group">
+                <label class="form-control-label">USEREMAIL</label>
+                <input type="text" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label class="form-control-label">PASSWORD</label>
+                <input type="password" class="form-control" i />
+              </div>
+
+              <div class="col-lg-12 loginbttm">
+                <div class="col-lg-6 login-btm login-text">
+                  <!-- Error Message -->
+                </div>
+                <div class="col-lg-12 login-btm login-button">
+                  <button type="submit" class="btn btn-outline-primary">
+                    LOGIN
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
-      <div class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">كلمه المرور</label>
-        <input
-          type="password"
-          class="form-control"
-          id="exampleInputPassword1"
-          v-model="userPassword"
-        />
-      </div>
-      <button type="submit" class="btn bg-primary bg-gradient w-100 text-white">تسجيل</button>
-    </form>
+    </div>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { useAuthStore } from "@/stores/auth";
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+<script lang="ts" setup></script>
 
-const router = useRouter();
-const auth = useAuthStore();
-
-const userEmail = ref("");
-const userPassword = ref("");
-
-const btn = ref(false);
-
-async function studentLogin() {
-    await auth.studentLogin(
-      userEmail.value,
-      userPassword.value,
-    );
-    userEmail.value = "";
-    userPassword.value = "";
-    router.push("/profile");
-  
+<style scoped>
+.row {
+  justify-content: center;
+  align-content: center;
 }
-</script>
+.login-box {
+  margin-top: 75px;
+  height: auto;
+  border-radius: 5px;
+  text-align: center;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  padding: 50px 15px 5px 15px;
+}
 
-<style>
+.login-title {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 30px;
+  letter-spacing: 2px;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.login-form {
+  margin-top: 25px;
+  text-align: left;
+}
+
+input {
+  border: none;
+  border-bottom: 2px solid #e34554;
+  border-top: 0px;
+  border-radius: 0px;
+  font-weight: bold;
+  outline: 0;
+  margin-bottom: 20px;
+  padding-left: 0px;
+  color: #ecf0f5;
+}
+
+.form-group {
+  margin-bottom: 40px;
+  outline: 0px;
+}
+
+.form-control:focus {
+  border-color: inherit;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  border-bottom: 2px solid #e02c3e;
+  outline: 0;
+  color: #ecf0f5;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 0;
+}
+
+label {
+  margin-bottom: 0px;
+}
+
+.form-control-label {
+  font-size: 10px;
+  color: #6c6c6c;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.btn-outline-primary {
+  border-color: #e34554;
+  color: #e34554;
+  border-radius: 0px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  width: 100%;
+  border-radius: 3px;
+}
+
+.btn-outline-primary:hover {
+  background-color: #e02c3e;
+  color: #fff;
+  right: 0px;
+}
+
+.login-btm {
+  float: left;
+}
+
+.login-button {
+  padding-right: 0px;
+  text-align: right;
+  margin-bottom: 25px;
+}
+
+.login-text {
+  text-align: left;
+  padding-left: 0px;
+  color: #a2a4a4;
+}
+
+.loginbttm {
+  padding: 0px;
+}
 </style>

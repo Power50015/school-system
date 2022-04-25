@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,17 +6,17 @@ const router = createRouter({
     {
       path: "/",
       name: "home",
-      component: HomeView,
+      component: () => import("../views/HomeView.vue"),
     },
     {
-      path: "/profile",
-      name: "profile",
-      component: () => import("../views/ProfileView.vue"),
+      path: "/admin-login",
+      name: "admin-login",
+      component: () => import("../views/AdminLoginView.vue"),
     },
     {
-      path: "/accounter-login",
-      name: "accounter-login",
-      component: () => import("../views/AccounterLoginView.vue"),
+      path: "/doctor-login",
+      name: "doctor-login",
+      component: () => import("../views/DoctorLoginView.vue"),
     },
     {
       path: "/student-login",
@@ -25,21 +24,24 @@ const router = createRouter({
       component: () => import("../views/StudentLoginView.vue"),
     },
     {
-      path: "/teacher-login",
-      name: "teacher-login",
-      component: () => import("../views/TeacherLoginView.vue"),
+      path: "/dashbord",
+      name: "dashbord",
+      component: () => import("../views/DashbordView.vue"),
     },
     {
-      path: "/student-affairs-login",
-      name: "student-affairs-login",
-      component: () => import("../views/StudentAffairsLoginView.vue"),
-
+      path: "/add-doctor",
+      name: "add-doctor",
+      component: () => import("../views/AddDoctorView.vue"),
     },
     {
-      path: "/student-affairs-dashbord",
-      name: "student-affairs-dashbord",
-      component: () => import("../views/StudentDashbordView.vue"),//
-
+      path: "/add-student",
+      name: "add-student",
+      component: () => import("../views/AddStudentView.vue"),
+    },
+    {
+      path: "/add-admin",
+      name: "add-admin",
+      component: () => import("../views/AddAdminView.vue"),
     },
   ],
 });
