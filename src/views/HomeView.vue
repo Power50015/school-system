@@ -1,12 +1,13 @@
 <template>
-  <AdminDashbord />
+  <ProfileView v-if="auth.type == 'studentAffair'" />
+  <HomePage v-else />
 </template>
 
 <script lang="ts" setup>
-import AdminDashbord from "@/components/AdminDashbord.vue";
-
+import HomePage from "@/components/HomePage.vue";
+import ProfileView from "@/components/ProfileView.vue";
+import { useAuthStore } from "@/stores/auth";
+const auth = useAuthStore();
 </script>
 
-<style>
-
-</style>
+<style></style>

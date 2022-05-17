@@ -1,11 +1,8 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light">
-    <div class="container">
-      <router-link to="/" class="navbar-brand" v-if="!auth.isLogin"
-        ><img src="@/assets/logo.png" alt="" srcset="" width="150"
-      /></router-link>
-      <router-link to="/dashbord" class="navbar-brand" v-if="auth.isLogin"
-        ><img src="@/assets/logo.png" alt="" srcset="" width="150"
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <router-link to="/" class="navbar-brand"
+        ><img src="../assets/logo.png" width="100"
       /></router-link>
       <button
         class="navbar-toggler"
@@ -19,92 +16,80 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0 justify-content-end w-100">
-          <li class="nav-item" v-if="!auth.isLogin">
-            <router-link to="/" class="nav-link" aria-current="page"
-              >الرئيسيه</router-link
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <router-link
+              class="nav-link active"
+              aria-current="page"
+              to="student"
+              >الطلاب</router-link
             >
           </li>
           <li class="nav-item">
             <router-link
-              to="/admin-login"
-              class="nav-link"
+              class="nav-link active"
               aria-current="page"
-              v-if="!auth.isLogin"
-              >تسجيل الدخول شئون طلبه</router-link
+              to="accounter"
+              >المحاسبون</router-link
             >
           </li>
           <li class="nav-item">
             <router-link
-              to="/doctor-login"
-              class="nav-link"
+              class="nav-link active"
               aria-current="page"
-              v-if="!auth.isLogin"
-              >تسجيل الدخول أستاذ</router-link
+              to="studentAffair"
+              >شئون طلاب</router-link
             >
-          </li>
-          <li class="nav-item">
-            <router-link
-              to="/student-login"
-              class="nav-link"
-              aria-current="page"
-              v-if="!auth.isLogin"
-              >تسجيل الدخول طالب</router-link
-            >
-          </li>
-          <li class="nav-item" v-if="auth.isLogin">
-            <div class="dropdown text-end">
-              <a
-                href="#"
-                class="d-block link-dark text-decoration-none dropdown-toggle"
-                id="dropdownUser1"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
-                <img
-                  :src="auth.photo"
-                  alt="mdo"
-                  width="32"
-                  height="32"
-                  class="rounded-circle"
-                />
-                {{auth.name}}
-              </a>
-              <ul
-                class="dropdown-menu text-small"
-                aria-labelledby="dropdownUser1"
-                style=""
-              >
-                <li>
-                  <router-link class="dropdown-item" to="/"
-                    >Home</router-link
-                  >
-                </li>
-                <li><hr class="dropdown-divider" /></li>
-                <li>
-                  <span class="dropdown-item" @click="auth.logout"
-                    >Sign out</span
-                  >
-                </li>
-              </ul>
-            </div>
           </li>
         </ul>
+        <form class="d-flex mx-5">
+          <div class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <img
+                :src="auth.photo"
+                alt=""
+                width="50"
+                height="50"
+                class="rounded-circle"
+              />
+              {{ auth.name }}
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <li>
+                <router-link class="dropdown-item" to="/"
+                  >الصفحه الشخصيه</router-link
+                >
+              </li>
+              <li><hr class="dropdown-divider" /></li>
+              <li @click="logout()" class="text-center dropdown-item btn">
+                تسجيل الخروج
+              </li>
+            </ul>
+          </div>
+        </form>
       </div>
     </div>
   </nav>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { useAuthStore } from "@/stores/auth";
+import { useRouter } from "vue-router";
 
 const auth = useAuthStore();
+const router = useRouter();
+
+function logout() {
+  auth.logout();
+  router.push("/");
+}
 </script>
 
-<style scoped>
-.logout {
-  cursor: pointer;
-  color: #ff1d33 !important;
-  font-weight: bold;
-}
-</style>
+<style></style>

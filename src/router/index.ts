@@ -14,35 +14,20 @@ const router = createRouter({
       component: () => import("../views/AdminLoginView.vue"),
     },
     {
-      path: "/doctor-login",
-      name: "doctor-login",
-      component: () => import("../views/DoctorLoginView.vue"),
+      path: "/student",
+      name: "student",
+      component: () => import("../views/StudentsView.vue"),
     },
     {
-      path: "/student-login",
-      name: "student-login",
-      component: () => import("../views/StudentLoginView.vue"),
+      path: "/accounter",
+      name: "accounter",
+      component: () => import("../views/AccounterView.vue"),
     },
     {
-      path: "/dashbord",
-      name: "dashbord",
-      component: () => import("../views/DashbordView.vue"),
-    },
-    {
-      path: "/add-doctor",
-      name: "add-doctor",
-      component: () => import("../views/AddDoctorView.vue"),
-    },
-    {
-      path: "/add-student",
-      name: "add-student",
-      component: () => import("../views/AddStudentView.vue"),
-    },
-    {
-      path: "/add-admin",
-      name: "add-admin",
-      component: () => import("../views/AddAdminView.vue"),
-    },
+      path: "/studentAffair",
+      name: "studentAffair",
+      component: () => import("../views/AdminView.vue"),
+    }
   ],
 });
 
