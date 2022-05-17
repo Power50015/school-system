@@ -27,7 +27,7 @@ const unsub = await onAuthStateChanged(auth, async (user) => {
   const auth = useAuthStore();
   if (user) {
     const q = query(
-      collection(db, "doctors"),
+      collection(db, "accounters"),
       where("email", "==", user.email)
     );
     const querySnapshot = await getDocs(q);
@@ -68,7 +68,7 @@ const unsub = await onAuthStateChanged(auth, async (user) => {
         auth.name = doc.data().name;
         auth.email = doc.data().email;
         auth.photo = doc.data().photo;
-        auth.type = "doctors";
+        auth.type = "accounters";
       });
     }
   }
@@ -309,6 +309,33 @@ export const useAuthStore = defineStore({
           signInWithEmailAndPassword(auth, this.email, this.password);
         });
       }, 1500);
+    },
+    accounterLogin(email: string, password: string) {
+      this.load = false;
+      signInWithEmailAndPassword(auth, email, password)
+        .then(async () => {
+          const q = query(
+            collection(db, "accounters"),
+            where("email", "==", email)
+          );
+          const querySnapshot = await getDocs(q);
+          querySnapshot.forEach((doc) => {
+            this.isLogin = true;
+            this.id = doc.id;
+            this.name = doc.data().name;
+            this.email = doc.data().email;
+            this.photo = doc.data().photo;
+            this.type = "accounters";
+            this.load = true;
+          });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode);
+          console.log(errorMessage);
+          this.load = true;
+        });
     },
   },
 });

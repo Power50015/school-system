@@ -23,7 +23,7 @@
           </router-link>
         </div>
         <div class="col-12 col-lg-3 dir">
-          <router-link to="/" class="text-center py-3">
+          <router-link to="/accounter-login" class="text-center py-3">
             <div>
               <img src="../assets/budget.png" alt="admin" class="icon" />
             </div>

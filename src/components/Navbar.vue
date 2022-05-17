@@ -17,7 +17,7 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
+          <li class="nav-item" v-if="auth.type == 'studentAffair'">
             <router-link
               class="nav-link active"
               aria-current="page"
@@ -25,7 +25,7 @@
               >الطلاب</router-link
             >
           </li>
-          <li class="nav-item">
+          <li class="nav-item" v-if="auth.type == 'studentAffair'">
             <router-link
               class="nav-link active"
               aria-current="page"
@@ -33,7 +33,7 @@
               >المحاسبون</router-link
             >
           </li>
-          <li class="nav-item">
+          <li class="nav-item" v-if="auth.type == 'studentAffair'">
             <router-link
               class="nav-link active"
               aria-current="page"
@@ -41,7 +41,7 @@
               >شئون طلاب</router-link
             >
           </li>
-          <li class="nav-item">
+          <li class="nav-item" v-if="auth.type == 'studentAffair'">
             <router-link
               class="nav-link active"
               aria-current="page"
@@ -49,7 +49,38 @@
               >الأساتذه</router-link
             >
           </li>
-          
+          <li class="nav-item" v-if="auth.type == 'accounters'">
+            <router-link
+              class="nav-link active"
+              aria-current="page"
+              to="student"
+              >مصاريف الطلاب</router-link
+            >
+          </li>
+          <li class="nav-item" v-if="auth.type == 'accounters'">
+            <router-link
+              class="nav-link active"
+              aria-current="page"
+              to="student"
+              >مصاريف الباصات</router-link
+            >
+          </li>
+          <li class="nav-item" v-if="auth.type == 'accounters'">
+            <router-link
+              class="nav-link active"
+              aria-current="page"
+              to="student"
+              >المدفوعات</router-link
+            >
+          </li>
+          <li class="nav-item" v-if="auth.type == 'accounters'">
+            <router-link
+              class="nav-link active"
+              aria-current="page"
+              to="student"
+              >مرتبات الأساتذه</router-link
+            >
+          </li>
         </ul>
         <form class="d-flex mx-5">
           <div class="nav-item dropdown">

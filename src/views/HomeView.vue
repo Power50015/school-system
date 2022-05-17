@@ -1,5 +1,5 @@
 <template>
-  <ProfileView v-if="auth.type == 'studentAffair'" />
+  <ProfileView v-if="auth.isLogin" />
   <HomePage v-else />
 </template>
 
