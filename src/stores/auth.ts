@@ -279,5 +279,36 @@ export const useAuthStore = defineStore({
         });
       }, 1500);
     },
+    addTeacher(
+      name: string,
+      email: string,
+      photo: string,
+      password: string,
+    ) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          // Add a new document in collection "doctors"
+          addDoc(collection(db, "teacher"), {
+            name: name,
+            email: email,
+            photo: photo,
+          });
+          createToast("تم حفظ الأستاذ", {
+            type: "success",
+          });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode);
+          console.log(errorMessage);
+        });
+      setTimeout(() => {
+        signOut(auth).then(() => {
+          signInWithEmailAndPassword(auth, this.email, this.password);
+        });
+      }, 1500);
+    },
   },
 });

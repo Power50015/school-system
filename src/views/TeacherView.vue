@@ -1,17 +1,17 @@
 <template>
   <div class="page">
     <div class="container my-5 p-5">
-      <h2 class="text-center">إضافه محاسب</h2>
+      <h2 class="text-center">إضافه أستاذ</h2>
       <div class="row">
         <div class="col-12">
           <form @submit.prevent="saveUser">
             <div class="form-group">
-              <label class="form-control-label">أسم شئون الطلاب</label>
+              <label class="form-control-label">أسم الأستاذ</label>
               <input type="text" class="form-control" v-model="name" />
             </div>
             <!-- Start image-->
             <div class="mb-3">
-              <label for="formFile" class="form-label">صوره شئون الطلاب</label>
+              <label for="formFile" class="form-label">صوره الأستاذ </label>
               <template v-if="imgPreview">
                 <img
                   :src="imgPreview"
@@ -40,7 +40,7 @@
             </div>
             <!-- End image-->
             <div class="form-group">
-              <label class="form-control-label">بريد الإلكترونى لشئون الطلاب</label>
+              <label class="form-control-label">بريد الإلكترونى للأستاذ</label>
               <input type="text" class="form-control" v-model="email" />
             </div>
             <div class="form-group">
@@ -57,7 +57,7 @@
                   class="btn btn-outline-primary"
                   :disabled="!btn"
                 >
-                  حفظ شئون الطلاب
+                  حفظ  الأستاذ
                 </button>
               </div>
             </div>
@@ -67,7 +67,7 @@
       <div class="row text-center">
         <div
           class="col col-lg-3"
-          v-for="item in accountersData"
+          v-for="item in teacherData"
           :key="item.index"
         >
           <div>
@@ -115,8 +115,8 @@ const imgData = reactive([]);
 const imgPreview = ref<any>("");
 const btn = ref(true);
 const imgUpload = ref(0);
-const accountersData = reactive([]);
-getAccountersData();
+const teacherData = reactive([]);
+getTeacherData();
 function saveUser() {
   btn.value = false;
   const storageRef = refire(storage, `${imgData.value.name}`);
@@ -135,7 +135,7 @@ function saveUser() {
       getDownloadURL(uploadTask.snapshot.ref).then((URL) => {
         btn.value = true;
         imgURL.value = URL;
-        auth.addAdmin(
+        auth.addTeacher(
           name.value,
           email.value,
           imgURL.value,
@@ -150,9 +150,8 @@ function saveUser() {
           imgPreview.value = "";
           imgUpload.value = 0;
           imgData.length = 0;
-          getAccountersData();
+          getTeacherData();
         }, 1500);
-        // router.push("/dashbord");
       });
     }
   );
@@ -167,12 +166,12 @@ function DetectFiles(input) {
     reader.readAsDataURL(input[0]);
   }
 }
-async function getAccountersData() {
-  accountersData.length = 0;
-  const q = query(collection(db, "studentAffair"));
+async function getTeacherData() {
+  teacherData.length = 0;
+  const q = query(collection(db, "teacher"));
   const querySnapshot = await getDocs(q);
   querySnapshot.forEach((doc) => {
-    accountersData.push(doc.data());
+    teacherData.push(doc.data());
   });
 }
 </script>
