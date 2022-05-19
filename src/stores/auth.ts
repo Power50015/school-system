@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import app from "../firebase";
 import { getFirestore, serverTimestamp } from "firebase/firestore";
 import { createToast } from "mosha-vue-toastify";
+import "mosha-vue-toastify/dist/style.css";
 import {
   doc,
   updateDoc,
@@ -189,7 +190,8 @@ export const useAuthStore = defineStore({
       email: string,
       photo: string,
       password: string,
-      studentClass: string
+      studentClass: string,
+      address: string
     ) {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
@@ -200,6 +202,7 @@ export const useAuthStore = defineStore({
             email: email,
             photo: photo,
             class: studentClass,
+            address: address,
           });
           createToast("تم حفظ الطالب", {
             type: "success",
@@ -217,12 +220,7 @@ export const useAuthStore = defineStore({
         });
       }, 1500);
     },
-    addAccounter(
-      name: string,
-      email: string,
-      photo: string,
-      password: string,
-    ) {
+    addAccounter(name: string, email: string, photo: string, password: string) {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
@@ -248,12 +246,7 @@ export const useAuthStore = defineStore({
         });
       }, 1500);
     },
-    addAdmin(
-      name: string,
-      email: string,
-      photo: string,
-      password: string,
-    ) {
+    addAdmin(name: string, email: string, photo: string, password: string) {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
@@ -279,12 +272,7 @@ export const useAuthStore = defineStore({
         });
       }, 1500);
     },
-    addTeacher(
-      name: string,
-      email: string,
-      photo: string,
-      password: string,
-    ) {
+    addTeacher(name: string, email: string, photo: string, password: string) {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;

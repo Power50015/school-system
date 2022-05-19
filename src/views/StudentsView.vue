@@ -80,6 +80,14 @@
                 <option value="الصف الثالث الثانوى">الصف الثالث الثانوى</option>
               </select>
             </div>
+            <div class="form-group">
+              <label class="form-control-label">العنوان</label>
+              <select class="form-control" v-model="address">
+                <option value="cairo">القاهره</option>
+                <option value="giza">الجيزه</option>
+                <option value="helwan">حلوان</option>
+              </select>
+            </div>
             <div class="col-lg-12 loginbttm">
               <div class="col-lg-6 login-btm login-text">
                 <!-- Error Message -->
@@ -114,6 +122,7 @@
             <h2>{{ item.name }}</h2>
             <h4>{{ item.email }}</h4>
             <h6>{{ item.class }}</h6>
+            <h6>{{ item.address }}</h6>
           </div>
         </div>
       </div>
@@ -145,6 +154,7 @@ const name = ref<string>("");
 const email = ref<string>("");
 const studentClass = ref("");
 const password = ref<string>("");
+const address = ref<string>("cairo");
 const imgURL = ref<string>("");
 const imgData = reactive([]);
 const imgPreview = ref<any>("");
@@ -175,7 +185,8 @@ function saveUser() {
           email.value,
           imgURL.value,
           password.value,
-          studentClass.value
+          studentClass.value,
+          address.value
         );
 
         setTimeout(() => {
@@ -187,6 +198,7 @@ function saveUser() {
           imgUpload.value = 0;
           imgData.length = 0;
           studentClass.value = "";
+          address.value = "";
           getStudentsData();
         }, 1500);
         // router.push("/dashbord");

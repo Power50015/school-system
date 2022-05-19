@@ -1,55 +1,88 @@
 <template>
   <div class="page">
     <div class="container my-5 p-5">
-      <router-link to="/" class="w-100 text-center d-block"
-        ><img
-          src="../assets/School-System-logos_black.png"
-          alt="logo"
-          width="150"
-      /></router-link>
+      <h2 class="text-center mb-5">مصاريف الباصات</h2>
       <div class="row">
-        <div class="col-12">
-          <h2 class="text-center">تـسجيل الدخول محاسبون</h2>
-          <form @submit.prevent="accounterLogin">
-            <div class="form-group">
-              <label class="form-control-label">البريد الإلكترونى</label>
-              <input type="text" class="form-control" v-model="email" />
-            </div>
-            <div class="form-group">
-              <label class="form-control-label">كلمه المرور</label>
-              <input type="password" class="form-control" v-model="password" />
-            </div>
-
-            <div class="col-lg-12 loginbttm">
-              <div class="col-lg-6 login-btm login-text">
-                <!-- Error Message -->
-              </div>
-              <div class="col-lg-12 login-btm login-button">
-                <button type="submit" class="btn btn-outline-primary">
-                  تسجيل الدخول
-                </button>
-              </div>
-            </div>
-          </form>
+        <div class="col-12 col-md-2">
+          <h6 class="">القاهرة</h6>
+          <h6 class="">
+            <input type="number" class="w-100" v-model="cairo" />
+          </h6>
         </div>
+        <div class="col-12 col-md-2">
+          <h6 class="">الجيزه</h6>
+          <h6 class="">
+            <input type="number" class="w-100" v-model="giza" />
+          </h6>
+        </div>
+        <div class="col-12 col-md-2">
+          <h6 class="">حلوان</h6>
+          <h6 class="">
+            <input type="number" class="w-100" v-model="helwan" />
+          </h6>
+        </div>
+        <button
+          type="submit"
+          class="btn btn-outline-primary"
+          @click="editUser()"
+        >
+          حفظ المصاريف
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import app from "@/firebase";
+import { doc, getFirestore, setDoc } from "firebase/firestore";
+import { collection, getDocs, where, query, orderBy } from "firebase/firestore";
 import { useAuthStore } from "@/stores/auth";
-import { ref } from "@vue/reactivity";
+import { reactive, ref } from "@vue/reactivity";
+import { computed } from "@vue/runtime-core";
 import { useRouter } from "vue-router";
+import {
+  getStorage,
+  ref as refire,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { createToast } from "mosha-vue-toastify";
+import "mosha-vue-toastify/dist/style.css";
+
+const db = getFirestore();
+const storage = getStorage();
 const router = useRouter();
 const auth = useAuthStore();
-const email = ref<string>("araesto@aresto.com");
-const password = ref<string>("araesto@aresto.com");
-function accounterLogin() {
-  auth.accounterLogin(email.value, password.value);
-  email.value = "";
-  password.value = "";
-  router.push("/");
+
+const id = ref();
+const cairo = ref();
+const giza = ref();
+const helwan = ref();
+
+getBusData();
+async function getBusData() {
+  const q = query(collection(db, "busExpense"));
+  const querySnapshot = await getDocs(q);
+  querySnapshot.forEach((doc) => {
+    id.value = doc.id;
+    cairo.value = doc.data().cairo;
+    giza.value = doc.data().giza;
+    helwan.value = doc.data().helwan;
+  });
+}
+
+async function editUser() {
+  await setDoc(doc(db, "busExpense", id.value), {
+    cairo: cairo.value,
+    giza: giza.value,
+    helwan: helwan.value,
+  }).then(() => {
+    createToast("تم حفظ ", {
+      type: "success",
+    });
+    getBusData();
+  });
 }
 </script>
 

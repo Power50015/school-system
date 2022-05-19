@@ -53,7 +53,7 @@
             <router-link
               class="nav-link active"
               aria-current="page"
-              to="student"
+              to="expense"
               >مصاريف الطلاب</router-link
             >
           </li>
@@ -61,7 +61,7 @@
             <router-link
               class="nav-link active"
               aria-current="page"
-              to="student"
+              to="bus-expense"
               >مصاريف الباصات</router-link
             >
           </li>
@@ -69,7 +69,7 @@
             <router-link
               class="nav-link active"
               aria-current="page"
-              to="student"
+              to="studen-pay-states"
               >المدفوعات</router-link
             >
           </li>

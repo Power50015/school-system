@@ -38,6 +38,20 @@ const router = createRouter({
       name: "accounter-login",
       component: () => import("../views/AccounterLoginView.vue"),
     },
+    {
+      path: "/expense",
+      name: "expense",
+      component: () => import("../views/ExpenseView.vue"),
+    },
+    {
+      path: "/bus-expense",
+      name: "bus-expense",
+      component: () => import("../views/BusExpenseView.vue"),
+    },{
+      path: "/studen-pay-states",
+      name: "studen-pay-states",
+      component: () => import("../views/StudenPayStates.vue"),
+    },
   ],
 });
 
