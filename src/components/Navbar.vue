@@ -81,6 +81,14 @@
               >مرتبات الأساتذه</router-link
             >
           </li>
+          <li class="nav-item" v-if="auth.type == 'students'">
+            <router-link
+              class="nav-link active"
+              aria-current="page"
+              to="student"
+              >المصاريف الدراسيه</router-link
+            >
+          </li>
         </ul>
         <form class="d-flex mx-5">
           <div class="nav-item dropdown">

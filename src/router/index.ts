@@ -52,6 +52,11 @@ const router = createRouter({
       name: "studen-pay-states",
       component: () => import("../views/StudenPayStates.vue"),
     },
+    {
+      path: "/student-login",
+      name: "student-login",
+      component: () => import("../views/StudentsLoginView.vue"),
+    }//
   ],
 });
 

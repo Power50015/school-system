@@ -49,7 +49,7 @@ const unsub = await onAuthStateChanged(auth, async (user) => {
           auth.name = doc.data().name;
           auth.email = doc.data().email;
           auth.photo = doc.data().photo;
-
+          auth.class = doc.data().class;
           auth.type = "students";
         });
       } else {
@@ -87,6 +87,7 @@ export const useAuthStore = defineStore({
     photo: "",
     type: "",
     password: "",
+    class:"",
     load: false,
   }),
   actions: {
@@ -127,50 +128,6 @@ export const useAuthStore = defineStore({
         this.type = "";
       });
     },
-    addUser(
-      name: string,
-      email: string,
-      photo: string,
-      password: string,
-      type: string
-    ) {
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
-          // Add a new document in collection "doctors"
-          if (type == "teachers") {
-            addDoc(collection(db, type), {
-              name: name,
-              email: email,
-              photo: photo,
-            });
-          } else if (type == "students") {
-            addDoc(collection(db, type), {
-              name: name,
-              email: email,
-              photo: photo,
-            });
-          } else {
-            addDoc(collection(db, type), {
-              name: name,
-              email: email,
-              photo: photo,
-              password: password,
-            });
-          }
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode);
-          console.log(errorMessage);
-        });
-      setTimeout(() => {
-        signOut(auth).then(() => {
-          signInWithEmailAndPassword(auth, this.email, this.password);
-        });
-      }, 1500);
-    },
     async editUser(name: string, photo: string) {
       this.load = false;
       await setDoc(doc(db, "studentAffair", this.id), {
@@ -203,6 +160,8 @@ export const useAuthStore = defineStore({
             photo: photo,
             class: studentClass,
             address: address,
+            expanceStates:"0",
+            busExpanceStates:"0",
           });
           createToast("تم حفظ الطالب", {
             type: "success",
@@ -314,6 +273,34 @@ export const useAuthStore = defineStore({
             this.email = doc.data().email;
             this.photo = doc.data().photo;
             this.type = "accounters";
+            this.load = true;
+          });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode);
+          console.log(errorMessage);
+          this.load = true;
+        });
+    },
+    studentLogin(email: string, password: string) {
+      this.load = false;
+      signInWithEmailAndPassword(auth, email, password)
+        .then(async () => {
+          const q = query(
+            collection(db, "students"),
+            where("email", "==", email)
+          );
+          const querySnapshot = await getDocs(q);
+          querySnapshot.forEach((doc) => {
+            this.isLogin = true;
+            this.id = doc.id;
+            this.name = doc.data().name;
+            this.email = doc.data().email;
+            this.photo = doc.data().photo;
+            this.class = doc.data().class;
+            this.type = "students";
             this.load = true;
           });
         })

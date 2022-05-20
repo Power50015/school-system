@@ -16,7 +16,7 @@
           <form @submit.prevent="studentAffairLogin">
             <div class="form-group">
               <label class="form-control-label">أسم المستخدم</label>
-              <input type="text" class="form-control" v-model="name" />
+              <input type="text" class="form-control" v-model="name" :disabled="auth.type == 'students'" />
             </div>
             <div class="form-group">
               <label class="form-control-label">البريد الإلكترونى</label>
@@ -28,7 +28,7 @@
               />
             </div>
             <!-- Start image-->
-            <div class="mb-3">
+            <div class="mb-3" v-if="!auth.type == 'students'">
               <label for="formFile" class="form-label">الصورة الشخصيه</label>
               <template v-if="imgPreview">
                 <img
@@ -74,6 +74,7 @@
                     type="submit"
                     class="btn btn-outline-primary"
                     v-show="!isDisabled"
+                    v-if="!auth.type == 'students'"
                   >
                     تعديل البيانات
                   </button>

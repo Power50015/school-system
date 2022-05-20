@@ -3,37 +3,106 @@
     <div class="container my-5 p-5">
       <h2 class="text-center mb-5">المدفوعات</h2>
       <div class="row">
-          <table class="table is-bordered is-striped is-truncated">
-            <thead>
-              <tr>
-                <th>المريض</th>
-                <th>تاريخ الحجز يوم</th>
-                <th>تاريخ الحجز شهر</th>
-                <th>معاد الحجز من : إلى</th>
-                <th>حجز معمل تحاليل</th>
-                <th>تم الحضور</th>
-                <th>إلغاءالحجز</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="doctorsRequest in resrvationsData">
-                <td @click="doctorsRequest.Usermodel = true">
-                  {{ doctorsRequest.userName }}
-                </td>
-                <td>{{ doctorsRequest.day }}</td>
-                <td>{{ doctorsRequest.month }}</td>
-                <td>{{ doctorsRequest.time }}</td>
-                <td>
-                  <button
-                    class="button is-primary"
-                    @click="showModel = doctorsRequest.docId"
-                  >
-                    حجز معمل تحاليل
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <table class="table is-bordered is-striped is-truncated text-center">
+          <thead>
+            <tr>
+              <th>الطالب</th>
+              <th>المصاريف الدراسيه</th>
+              <th>حاله الدفع</th>
+              <th>مصاريف الباص</th>
+              <th>حاله الباص</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="student in studentsData">
+              <td
+                data-bs-toggle="modal"
+                :data-bs-target="`#exampleModal${student.docId}`"
+              >
+                {{ student.name }}
+              </td>
+              <td>
+                {{ student.expance }}
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  @click="editExpanceStates(student.docId)"
+                  v-if="student.expanceStates == '0'"
+                >
+                  دفع كاش
+                </button>
+                <h6 v-else class="text-dark">{{
+                  student.expanceStates
+                }}</h6>
+              </td>
+              <td>
+                {{ student.bus }}
+              </td>
+               <td>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  @click="editBusExpanceStates(student.docId,'كاش')"
+                  v-if="student.busExpanceStates == '0'"
+                >
+                  دفع كاش
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger mx-3"
+                  @click="editBusExpanceStates(student.docId,'إلغاء الإشتراك')"
+                  v-if="student.busExpanceStates == '0'"
+                >
+                إلغاء الإشتراك
+                </button>
+                <h6 v-else class="text-dark">{{
+                  student.busExpanceStates
+                }}</h6>
+              </td>
+
+              <!-- Modal -->
+              <div
+                class="modal fade"
+                :id="`exampleModal${student.docId}`"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">
+                        بيانات الطالب
+                      </h5>
+                      <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"
+                      ></button>
+                    </div>
+
+                    <div class="modal-body">
+                      <img
+                        :src="student.photo"
+                        :alt="student.name"
+                        width="150"
+                        height="150"
+                        class="rounded-circle"
+                      />
+                      <h3>{{ student.name }}</h3>
+                      <h4>{{ student.email }}</h4>
+                      <h3>{{ student.class }}</h3>
+                      <h3>{{ student.address }}</h3>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -41,7 +110,7 @@
 
 <script lang="ts" setup>
 import app from "@/firebase";
-import { doc, getFirestore, setDoc } from "firebase/firestore";
+import { doc, getFirestore, setDoc, updateDoc } from "firebase/firestore";
 import { collection, getDocs, where, query, orderBy } from "firebase/firestore";
 import { useAuthStore } from "@/stores/auth";
 import { reactive, ref } from "@vue/reactivity";
@@ -49,7 +118,6 @@ import { computed } from "@vue/runtime-core";
 import { useRouter } from "vue-router";
 import {
   getStorage,
-  ref as refire,
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
@@ -61,35 +129,119 @@ const storage = getStorage();
 const router = useRouter();
 const auth = useAuthStore();
 
+const studentsData = reactive([]);
 
-/*
 getStudentsData();
 
-async function getLaboratoryData() {
-  laboratoryData.length = 0;
+async function getStudentsData() {
+  studentsData.length = 0;
 
-  const querySnapshot = await getDocs(collection(db, "laboratory"));
+  const querySnapshot = await getDocs(collection(db, "students"));
 
-  querySnapshot.forEach((doc) => {
-    laboratoryData.push({
+  querySnapshot.forEach(async (doc) => {
+    studentsData.push({
       docId: doc.id,
+      expance: await getExpenseData(doc.data().class),
+      bus: await getBusData(doc.data().address),
       ...doc.data(),
     });
   });
-}*/
+}
 
-async function editUser() {
-  await setDoc(doc(db, "busExpense", id.value), {
-    cairo: cairo.value,
-    giza: giza.value,
-    helwan: helwan.value,
+async function getExpenseData(studentYear: any) {
+  let Expense;
+  const querySnapshot = await getDocs(collection(db, "expense"));
+
+  querySnapshot.forEach((doc) => {
+    switch (studentYear) {
+      case "الصف الأول الإبتدائي":
+        Expense = doc.data().one;
+        break;
+      case "الصف الثانى الإبتدائي":
+        Expense = doc.data().two;
+        break;
+      case "الصف الثالث الإبتدائي":
+        Expense = doc.data().three;
+        break;
+      case "الصف الرابع الإبتدائي":
+        Expense = doc.data().four;
+        break;
+      case "الصف الخامس الإبتدائي":
+        Expense = doc.data().five;
+        break;
+      case "الصف السادس الإبتدائي":
+        Expense = doc.data().six;
+        break;
+      case "الصف الأول الإعدادى":
+        Expense = doc.data().one3dadi;
+        break;
+      case "الصف الثانى الإعدادى":
+        Expense = doc.data().two3dadi;
+        break;
+      case "الصف الثالث الإعدادى":
+        Expense = doc.data().three3dadi;
+        break;
+      case "الصف الأول الثانوى":
+        Expense = doc.data().onethanwi;
+        break;
+      case "الصف الثانى الثانوى":
+        Expense = doc.data().twothanwi;
+        break;
+      case "الصف الثالث الثانوى":
+        Expense = doc.data().threethanwi;
+        break;
+    }
+  });
+  return Expense;
+}
+
+async function getBusData(studentAdress: any) {
+  let Expense;
+  const querySnapshot = await getDocs(collection(db, "busExpense"));
+
+  querySnapshot.forEach((doc) => {
+    switch (studentAdress) {
+      case "cairo":
+        Expense = doc.data().cairo;
+        break;
+      case "giza":
+        Expense = doc.data().giza;
+        break;
+      case "helwan":
+        Expense = doc.data().helwan;
+        break;
+    }
+  });
+  return Expense;
+}
+
+async function editExpanceStates(id: string) {
+  await updateDoc(doc(db, "students", id), {
+    expanceStates: "كاش",
   }).then(() => {
-    createToast("تم حفظ ", {
-      type: "success",
-    });
-    getBusData();
+    getStudentsData();
   });
 }
+
+async function editBusExpanceStates(id: string, state: string) {
+  await updateDoc(doc(db, "students", id), {
+    busExpanceStates: state,
+  }).then(() => {
+    getStudentsData();
+  });
+}
+// async function editUser() {
+//   await setDoc(doc(db, "busExpense", id.value), {
+//     cairo: cairo.value,
+//     giza: giza.value,
+//     helwan: helwan.value,
+//   }).then(() => {
+//     createToast("تم حفظ ", {
+//       type: "success",
+//     });
+//     getBusData();
+//   });
+// }
 </script>
 
 <style scoped>

@@ -13,7 +13,7 @@
           </router-link>
         </div>
         <div class="col-12 col-lg-3">
-          <router-link to="/" class="text-center py-3">
+          <router-link to="/student-login" class="text-center py-3">
             <div>
               <img src="../assets/students.png" alt="admin" class="icon" />
             </div>
