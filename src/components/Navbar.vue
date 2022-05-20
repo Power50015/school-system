@@ -85,7 +85,7 @@
             <router-link
               class="nav-link active"
               aria-current="page"
-              to="student"
+              to="student-expense"
               >المصاريف الدراسيه</router-link
             >
           </li>
