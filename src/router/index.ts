@@ -47,7 +47,8 @@ const router = createRouter({
       path: "/bus-expense",
       name: "bus-expense",
       component: () => import("../views/BusExpenseView.vue"),
-    },{
+    },
+    {
       path: "/studen-pay-states",
       name: "studen-pay-states",
       component: () => import("../views/StudenPayStates.vue"),
@@ -61,7 +62,17 @@ const router = createRouter({
       path: "/student-expense",
       name: "student-expense",
       component: () => import("../views/StudentsExpenseView.vue"),
-    }//
+    },
+    {
+      path: "/teacher-pay",
+      name: "teacher-pay",
+      component: () => import("../views/TeacherPayView.vue"),
+    },
+    {
+      path: "/teacher-login",
+      name: "teacher-login",
+      component: () => import("../views/TeacherLoginView.vue"),
+    },
   ],
 });
 

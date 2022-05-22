@@ -33,7 +33,7 @@
           </router-link>
         </div>
         <div class="col-12 col-lg-3 dir">
-          <router-link to="/" class="text-center py-3">
+          <router-link to="teacher-login" class="text-center py-3">
             <div>
               <img src="../assets/teacher.png" alt="admin" class="icon" />
             </div>

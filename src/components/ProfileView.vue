@@ -16,7 +16,7 @@
           <form @submit.prevent="studentAffairLogin">
             <div class="form-group">
               <label class="form-control-label">أسم المستخدم</label>
-              <input type="text" class="form-control" v-model="name" :disabled="auth.type == 'students'" />
+              <input type="text" class="form-control" v-model="name" :disabled="auth.type == 'students' || auth.type == 'teacher'" />
             </div>
             <div class="form-group">
               <label class="form-control-label">البريد الإلكترونى</label>
@@ -27,6 +27,8 @@
                 disabled
               />
             </div>
+            <h3>المرتب : {{auth.salary}}</h3>
+            <h3>تفاصيل المرتب : {{auth.salaryDes}}</h3>
             <!-- Start image-->
             <div class="mb-3" v-if="!auth.type == 'students'">
               <label for="formFile" class="form-label">الصورة الشخصيه</label>

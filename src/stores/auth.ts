@@ -44,14 +44,31 @@ const unsub = await onAuthStateChanged(auth, async (user) => {
           where("email", "==", user.email)
         );
         const querySnapshot = await getDocs(q);
-        querySnapshot.forEach((doc) => {
-          auth.isLogin = true;
-          auth.name = doc.data().name;
-          auth.email = doc.data().email;
-          auth.photo = doc.data().photo;
-          auth.class = doc.data().class;
-          auth.type = "students";
-        });
+        if (querySnapshot.empty) {
+          const q = query(
+            collection(db, "teacher"),
+            where("email", "==", user.email)
+          );
+          const querySnapshot = await getDocs(q);
+          querySnapshot.forEach((doc) => {
+            auth.isLogin = true;
+            auth.name = doc.data().name;
+            auth.email = doc.data().email;
+            auth.photo = doc.data().photo;
+            auth.salary = doc.data().salary;
+            auth.salaryDes = doc.data().salaryDes;
+            auth.type = "teacher";
+          });
+        } else {
+          querySnapshot.forEach((doc) => {
+            auth.isLogin = true;
+            auth.name = doc.data().name;
+            auth.email = doc.data().email;
+            auth.photo = doc.data().photo;
+            auth.class = doc.data().class;
+            auth.type = "students";
+          });
+        }
       } else {
         querySnapshot.forEach((doc) => {
           auth.isLogin = true;
@@ -87,7 +104,9 @@ export const useAuthStore = defineStore({
     photo: "",
     type: "",
     password: "",
-    class:"",
+    class: "",
+    salary: "",
+    salaryDes: "",
     load: false,
   }),
   actions: {
@@ -160,8 +179,8 @@ export const useAuthStore = defineStore({
             photo: photo,
             class: studentClass,
             address: address,
-            expanceStates:"0",
-            busExpanceStates:"0",
+            expanceStates: "0",
+            busExpanceStates: "0",
           });
           createToast("تم حفظ الطالب", {
             type: "success",
@@ -240,6 +259,8 @@ export const useAuthStore = defineStore({
             name: name,
             email: email,
             photo: photo,
+            salary: 0,
+            salaryDes: "",
           });
           createToast("تم حفظ الأستاذ", {
             type: "success",
@@ -301,6 +322,35 @@ export const useAuthStore = defineStore({
             this.photo = doc.data().photo;
             this.class = doc.data().class;
             this.type = "students";
+            this.load = true;
+          });
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode);
+          console.log(errorMessage);
+          this.load = true;
+        });
+    },
+    teacherLogin(email: string, password: string) {
+      this.load = false;
+      signInWithEmailAndPassword(auth, email, password)
+        .then(async () => {
+          const q = query(
+            collection(db, "teacher"),
+            where("email", "==", email)
+          );
+          const querySnapshot = await getDocs(q);
+          querySnapshot.forEach((doc) => {
+            this.isLogin = true;
+            this.id = doc.id;
+            this.name = doc.data().name;
+            this.email = doc.data().email;
+            this.photo = doc.data().photo;
+            this.salary = doc.data().salary;
+            this.salaryDes = doc.data().salaryDes;
+            this.type = "teacher";
             this.load = true;
           });
         })

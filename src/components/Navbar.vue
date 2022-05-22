@@ -77,7 +77,7 @@
             <router-link
               class="nav-link active"
               aria-current="page"
-              to="student"
+              to="teacher-pay"
               >مرتبات الأساتذه</router-link
             >
           </li>
