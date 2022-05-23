@@ -27,8 +27,8 @@
                 disabled
               />
             </div>
-            <h3>المرتب : {{auth.salary}}</h3>
-            <h3>تفاصيل المرتب : {{auth.salaryDes}}</h3>
+            <h3 v-if="auth.type == 'teacher'">المرتب : {{auth.salary}}</h3>
+            <h3  v-if="auth.type == 'teacher'">تفاصيل المرتب : {{auth.salaryDes}}</h3>
             <!-- Start image-->
             <div class="mb-3" v-if="!auth.type == 'students'">
               <label for="formFile" class="form-label">الصورة الشخصيه</label>
